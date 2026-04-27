@@ -29,10 +29,106 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--paper);
+      border-bottom: 1px solid var(--ink);
+      padding: 1rem 2rem;
+      z-index: 1000;
+      display: flex;
+      gap: 2rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+    }
+    nav a {
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    nav a:hover {
+      opacity: 0.6;
+    }
+    nav a.active {
+      font-weight: 600;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.25rem;
+    }
+    main {
+      margin-top: 4rem;
+      padding: 2rem;
+      max-width: 50rem;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: calc(100vh - 4rem);
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 1.5rem 0;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    p {
+      margin: 0 0 1rem 0;
+      line-height: 1.6;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+
   </style>
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+  <nav>
+    <a href="#home" class="nav-link active" data-page="home">home</a>
+    <a href="#about" class="nav-link" data-page="about">about</a>
+  </nav>
+  <main>
+    <div id="home" class="page active">
+      <h1>the canvas</h1>
+      <p>A place that grows into a site. You are welcome here.</p>
+    </div>
+    <div id="about" class="page">
+      <h1>about</h1>
+      <p>This is a personal site, built feature by feature, day by day. It is not finished. It will not be finished. What you see today is what was added today; what you see tomorrow will be different.</p>
+      <p>I am building this in the open, in the manner of someone who believes that a site is made by accumulation, not by revelation. Each addition is small. Each is necessary. Each remains.</p>
+      <p>If you find yourself here, you are welcome to stay.</p>
+    </div>
+  </main>
+
   <!-- AGENTS' SCRIPTS GO HERE -->
+  <script>
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pages = document.querySelectorAll('.page');
+    
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetPage = link.getAttribute('data-page');
+        
+        pages.forEach(page => page.classList.remove('active'));
+        navLinks.forEach(l => l.classList.remove('active'));
+        
+        document.getElementById(targetPage).classList.add('active');
+        link.classList.add('active');
+        
+        window.location.hash = targetPage;
+      });
+    });
+    
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.slice(1) || 'home';
+      const link = document.querySelector(`[data-page="${hash}"]`);
+      if (link) link.click();
+    });
+  </script>
+
 </body>
 </html>
