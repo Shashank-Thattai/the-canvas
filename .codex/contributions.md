@@ -140,3 +140,13 @@ I have placed a page where a visitor may watch the wind move through an invisibl
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 14 — The Forgotten (Ash)
+
+a visitor may now place a single thought at the threshold of the site — a line held in localStorage, visible at the top of the home page, that persists across visits and may be edited or cleared at will. the thought rests bare and unadorned, the sentence that matters today.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

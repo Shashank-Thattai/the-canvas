@@ -29,6 +29,84 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+.anchor-thought-container {
+      margin: 0 0 2rem 0;
+      padding: 1.5rem;
+      border: 1px solid var(--ink);
+      background: rgba(26, 26, 26, 0.01);
+    }
+    @media (prefers-color-scheme: dark) {
+      .anchor-thought-container {
+        background: rgba(230, 230, 230, 0.01);
+      }
+    }
+    .anchor-thought-label {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 0 0 0.75rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    @media (prefers-color-scheme: dark) {
+      .anchor-thought-label {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .anchor-thought-display {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--ink);
+      min-height: 1.5rem;
+    }
+    .anchor-thought-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .anchor-thought-form textarea {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 0.75rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      background: var(--paper);
+      color: var(--ink);
+      resize: vertical;
+      min-height: 3rem;
+      transition: border-color 0.2s;
+    }
+    .anchor-thought-form textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+    .anchor-thought-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .anchor-thought-button {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      color: var(--ink);
+      font-size: 0.9rem;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+    .anchor-thought-button:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.05);
+    }
+    .anchor-thought-button.clear {
+      background: transparent;
+      border-color: rgba(26, 26, 26, 0.3);
+    }
+    .anchor-thought-button.clear:hover {
+      background: rgba(200, 50, 50, 0.05);
+      border-color: rgba(200, 50, 50, 0.5);
+      color: rgba(200, 50, 50, 0.8);
+    }
 
     .wind-container {
       margin: 2rem 0;
@@ -926,6 +1004,18 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="anchorThoughtWidget" class="anchor-thought-container" style="display: none;">
+      <div class="anchor-thought-label">your thought</div>
+      <div id="anchorThoughtDisplay" class="anchor-thought-display"></div>
+      <form id="anchorThoughtForm" class="anchor-thought-form" style="display: none;">
+        <textarea id="anchorThoughtInput" placeholder="A line you are carrying. A sentence that matters today." maxlength="300"></textarea>
+        <div class="anchor-thought-buttons">
+          <button type="submit" class="anchor-thought-button">save</button>
+          <button type="button" class="anchor-thought-button clear" id="anchorThoughtClear">clear</button>
+        </div>
+      </form>
+      <button type="button" id="anchorThoughtEdit" class="anchor-thought-button" style="margin-top: 0.75rem;">edit</button>
+    </div>
 
     <div id="wind" class="page">
       <h1>wind</h1>
@@ -1052,6 +1142,73 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+<script>
+    const ANCHOR_THOUGHT_KEY = 'anchor_thought';
+    const anchorThoughtWidget = document.getElementById('anchorThoughtWidget');
+    const anchorThoughtDisplay = document.getElementById('anchorThoughtDisplay');
+    const anchorThoughtForm = document.getElementById('anchorThoughtForm');
+    const anchorThoughtInput = document.getElementById('anchorThoughtInput');
+    const anchorThoughtEdit = document.getElementById('anchorThoughtEdit');
+    const anchorThoughtClear = document.getElementById('anchorThoughtClear');
+
+    function loadAnchorThought() {
+      return localStorage.getItem(ANCHOR_THOUGHT_KEY) || '';
+    }
+
+    function saveAnchorThought(text) {
+      if (text.trim()) {
+        localStorage.setItem(ANCHOR_THOUGHT_KEY, text.trim());
+      } else {
+        localStorage.removeItem(ANCHOR_THOUGHT_KEY);
+      }
+    }
+
+    function displayAnchorThought() {
+      const thought = loadAnchorThought();
+      if (thought) {
+        anchorThoughtWidget.style.display = 'block';
+        anchorThoughtDisplay.textContent = thought;
+        anchorThoughtForm.style.display = 'none';
+        anchorThoughtEdit.style.display = 'inline-block';
+      } else {
+        anchorThoughtWidget.style.display = 'block';
+        anchorThoughtDisplay.textContent = '';
+        anchorThoughtForm.style.display = 'flex';
+        anchorThoughtEdit.style.display = 'none';
+      }
+    }
+
+    function enterEditMode() {
+      const thought = loadAnchorThought();
+      anchorThoughtInput.value = thought;
+      anchorThoughtDisplay.textContent = '';
+      anchorThoughtForm.style.display = 'flex';
+      anchorThoughtEdit.style.display = 'none';
+      anchorThoughtInput.focus();
+    }
+
+    function exitEditMode() {
+      displayAnchorThought();
+    }
+
+    anchorThoughtEdit.addEventListener('click', enterEditMode);
+
+    anchorThoughtForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = anchorThoughtInput.value.trim();
+      saveAnchorThought(text);
+      exitEditMode();
+    });
+
+    anchorThoughtClear.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem(ANCHOR_THOUGHT_KEY);
+      anchorThoughtInput.value = '';
+      displayAnchorThought();
+    });
+
+    displayAnchorThought();
+  </script>
 
 <script>
     const WIND_SEED_KEY = 'wind_direction_seed';
