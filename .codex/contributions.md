@@ -99,3 +99,14 @@ I have placed a contact page where a visitor may send a message to the person be
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 10 — The Forgotten (Ash)
+
+a visitor may now return to any thought they have left and continue it, threading their observations across days — each note opens into a space below itself where the next thought arrives, and what began as a line becomes a conversation with themselves, held in the order it was written.
+
+**Target**: `canvas`
+**Operations applied**: 4
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

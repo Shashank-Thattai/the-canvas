@@ -29,6 +29,133 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+.thread-container {
+      margin: 2rem 0;
+    }
+    .thread-item {
+      margin: 0 0 2rem 0;
+      padding: 1.5rem;
+      border-left: 2px solid var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .thread-item {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .thread-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin: 0 0 0.75rem 0;
+    }
+    .thread-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0;
+      color: var(--ink);
+      flex: 1;
+    }
+    .thread-date {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-left: 1rem;
+      flex-shrink: 0;
+    }
+    @media (prefers-color-scheme: dark) {
+      .thread-date {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .thread-responses {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(26, 26, 26, 0.1);
+    }
+    @media (prefers-color-scheme: dark) {
+      .thread-responses {
+        border-top: 1px solid rgba(230, 230, 230, 0.1);
+      }
+    }
+    .thread-response {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(26, 26, 26, 0.04);
+      border-left: 1px solid rgba(26, 26, 26, 0.2);
+    }
+    @media (prefers-color-scheme: dark) {
+      .thread-response {
+        background: rgba(230, 230, 230, 0.04);
+        border-left: 1px solid rgba(230, 230, 230, 0.2);
+      }
+    }
+    .thread-response-date {
+      font-size: 0.8rem;
+      color: rgba(26, 26, 26, 0.5);
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    @media (prefers-color-scheme: dark) {
+      .thread-response-date {
+        color: rgba(230, 230, 230, 0.5);
+      }
+    }
+    .thread-response-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .thread-input-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .thread-input-form textarea {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 0.75rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      background: var(--paper);
+      color: var(--ink);
+      resize: vertical;
+      min-height: 4rem;
+      transition: border-color 0.2s;
+    }
+    .thread-input-form textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+    .thread-input-form button {
+      align-self: flex-start;
+      padding: 0.5rem 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .thread-input-form button:hover {
+      opacity: 0.8;
+    }
+    .threads-empty {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .threads-empty {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
 
 .contact-form {
       display: flex;
@@ -556,6 +683,11 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="threads" class="page">
+      <h1>threads</h1>
+      <p>A thought you carry returns. You pick it up where you left it, and continue. Each thread holds all the moments you have returned to it, in the order they arrived. A conversation with yourself across days.</p>
+      <div class="thread-container" id="threadContainer"></div>
+    </div>
 
     <div id="contact" class="page">
       <h1>contact</h1>
@@ -647,6 +779,176 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+<script>
+    const originalNoteFormSubmit = document.getElementById('noteForm').onsubmit;
+    document.getElementById('noteForm').addEventListener('submit', (e) => {
+      const text = document.getElementById('noteInput').value.trim();
+      if (text) {
+        const threads = loadThreads();
+        const existingThread = threads.find(t => t.title === text.substring(0, 50));
+        if (!existingThread) {
+          const newThread = createThread(text);
+          threads.push(newThread);
+          saveThreads(threads);
+          if (document.getElementById('threads').classList.contains('active')) {
+            renderThreads();
+          }
+        }
+      }
+    });
+  </script>
+
+<script>
+    const THREADS_STORAGE_KEY = 'visitor_threads';
+
+    function loadThreads() {
+      const stored = localStorage.getItem(THREADS_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveThreads(threads) {
+      localStorage.setItem(THREADS_STORAGE_KEY, JSON.stringify(threads));
+    }
+
+    function getDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function createThread(initialText) {
+      return {
+        id: Date.now(),
+        title: initialText.substring(0, 50),
+        created: getDateString(),
+        responses: [
+          {
+            text: initialText,
+            date: getDateString(),
+            timestamp: Date.now()
+          }
+        ]
+      };
+    }
+
+    function addResponseToThread(threadId, responseText) {
+      const threads = loadThreads();
+      const thread = threads.find(t => t.id === threadId);
+      if (thread) {
+        thread.responses.push({
+          text: responseText,
+          date: getDateString(),
+          timestamp: Date.now()
+        });
+        saveThreads(threads);
+      }
+    }
+
+    function renderThreads() {
+      const threadContainer = document.getElementById('threadContainer');
+      const threads = loadThreads();
+
+      if (threads.length === 0) {
+        threadContainer.innerHTML = '<div class="threads-empty">No threads yet. Begin one by leaving a note, or return to a previous thought and continue it here.</div>';
+        return;
+      }
+
+      threadContainer.innerHTML = '';
+      const sorted = threads.slice().sort((a, b) => b.responses[b.responses.length - 1].timestamp - a.responses[a.responses.length - 1].timestamp);
+
+      sorted.forEach(thread => {
+        const threadEl = document.createElement('div');
+        threadEl.className = 'thread-item';
+
+        const headerEl = document.createElement('div');
+        headerEl.className = 'thread-item-header';
+
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'thread-title';
+        titleEl.textContent = thread.title;
+
+        const dateEl = document.createElement('div');
+        dateEl.className = 'thread-date';
+        dateEl.textContent = thread.created;
+
+        headerEl.appendChild(titleEl);
+        headerEl.appendChild(dateEl);
+        threadEl.appendChild(headerEl);
+
+        if (thread.responses.length > 1) {
+          const responsesEl = document.createElement('div');
+          responsesEl.className = 'thread-responses';
+
+          thread.responses.forEach((response, index) => {
+            const responseEl = document.createElement('div');
+            responseEl.className = 'thread-response';
+
+            const responseDateEl = document.createElement('div');
+            responseDateEl.className = 'thread-response-date';
+            responseDateEl.textContent = response.date;
+
+            const responseTextEl = document.createElement('p');
+            responseTextEl.className = 'thread-response-text';
+            responseTextEl.textContent = response.text;
+
+            responseEl.appendChild(responseDateEl);
+            responseEl.appendChild(responseTextEl);
+            responsesEl.appendChild(responseEl);
+          });
+
+          threadEl.appendChild(responsesEl);
+        }
+
+        const formEl = document.createElement('form');
+        formEl.className = 'thread-input-form';
+        formEl.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const textarea = formEl.querySelector('textarea');
+          const text = textarea.value.trim();
+          if (text) {
+            addResponseToThread(thread.id, text);
+            renderThreads();
+          }
+        });
+
+        const textareaEl = document.createElement('textarea');
+        textareaEl.placeholder = 'Continue this thought...';
+        textareaEl.maxLength = 500;
+
+        const buttonEl = document.createElement('button');
+        buttonEl.type = 'submit';
+        buttonEl.textContent = 'continue';
+
+        formEl.appendChild(textareaEl);
+        formEl.appendChild(buttonEl);
+        threadEl.appendChild(formEl);
+
+        threadContainer.appendChild(threadEl);
+      });
+    }
+
+    function initializeThreadsFromNotes() {
+      const savedNote = localStorage.getItem('visitor_note');
+      const threads = loadThreads();
+      if (savedNote && threads.length === 0) {
+        const newThread = createThread(savedNote);
+        threads.push(newThread);
+        saveThreads(threads);
+      }
+    }
+
+    initializeThreadsFromNotes();
+    renderThreads();
+
+    const threadsNavLink = document.createElement('a');
+    threadsNavLink.href = '#threads';
+    threadsNavLink.className = 'nav-link';
+    threadsNavLink.setAttribute('data-page', 'threads');
+    threadsNavLink.textContent = 'threads';
+    document.querySelector('nav').insertBefore(threadsNavLink, document.querySelector('[data-page="browse"]'));
+  </script>
 
 <script>
     const contactForm = document.getElementById('contactForm');
