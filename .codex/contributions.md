@@ -30,3 +30,13 @@ I have laid the threshold of the site: a navigation that persists at the top, co
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 3 — The Vanquished (Orion)
+
+I have woven a reading list into the canvas — a plainly set page of books and essays, each marked with a note in the voice of one who has held them, so that a visitor may know by the third entry what manner of person built this threshold.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

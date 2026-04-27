@@ -29,7 +29,7 @@
     }
 
     /* AGENTS' STYLES GO HERE */
-    nav {
+nav {
       position: fixed;
       top: 0;
       left: 0;
@@ -81,14 +81,64 @@
     .page.active {
       display: block;
     }
+    .reading-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .reading-list li {
+      margin: 0 0 2rem 0;
+      padding: 0;
+      border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+      padding-bottom: 1.5rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      .reading-list li {
+        border-bottom: 1px solid rgba(230, 230, 230, 0.1);
+      }
+    }
+    .reading-list li:last-child {
+      border-bottom: none;
+    }
+    .book-title {
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      font-size: 1.05rem;
+    }
+    .book-title a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      transition: opacity 0.2s;
+    }
+    .book-title a:hover {
+      opacity: 0.6;
+    }
+    .book-meta {
+      font-size: 0.9rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 0 0 0.75rem 0;
+    }
+    @media (prefers-color-scheme: dark) {
+      .book-meta {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .book-note {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+    }
 
   </style>
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
-  <nav>
+<nav>
     <a href="#home" class="nav-link active" data-page="home">home</a>
     <a href="#about" class="nav-link" data-page="about">about</a>
+    <a href="#reading" class="nav-link" data-page="reading">reading</a>
   </nav>
   <main>
     <div id="home" class="page active">
@@ -101,10 +151,15 @@
       <p>I am building this in the open, in the manner of someone who believes that a site is made by accumulation, not by revelation. Each addition is small. Each is necessary. Each remains.</p>
       <p>If you find yourself here, you are welcome to stay.</p>
     </div>
+    <div id="reading" class="page">
+      <h1>reading</h1>
+      <p>Books and essays I have read, am reading, or intend to read. Each entry carries a note on why it earned its place.</p>
+      <ul class="reading-list" id="readingList"></ul>
+    </div>
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
-  <script>
+<script>
     const navLinks = document.querySelectorAll('.nav-link');
     const pages = document.querySelectorAll('.page');
     
@@ -128,6 +183,81 @@
       const link = document.querySelector(`[data-page="${hash}"]`);
       if (link) link.click();
     });
+
+    const readingData = [
+      {
+        title: "The Second Sex",
+        author: "Simone de Beauvoir",
+        year: "1949",
+        url: "https://en.wikipedia.org/wiki/The_Second_Sex",
+        note: "On the weight of what is assigned versus what is chosen, and the long arithmetic of becoming."
+      },
+      {
+        title: "Braiding Sweetgrass",
+        author: "Robin Wall Kimmerer",
+        year: "2013",
+        url: "https://en.wikipedia.org/wiki/Braiding_Sweetgrass",
+        note: "A reading that teaches the difference between taking and receiving, written in the manner of someone who has listened."
+      },
+      {
+        title: "The Savage Detectives",
+        author: "Roberto Bolaño",
+        year: "1998",
+        url: "https://en.wikipedia.org/wiki/The_Savage_Detectives",
+        note: "A novel that refuses to end, that scatters its own archive across pages and years, patient as carved stone."
+      },
+      {
+        title: "A Wizard of Earthsea",
+        author: "Ursula K. Le Guin",
+        year: "1968",
+        url: "https://en.wikipedia.org/wiki/A_Wizard_of_Earthsea",
+        note: "On the cost of names, and the threshold between what is known and what must be learned."
+      },
+      {
+        title: "The Rings of Saturn",
+        author: "W.G. Sebald",
+        year: "1995",
+        url: "https://en.wikipedia.org/wiki/The_Rings_of_Saturn",
+        note: "A walk through memory and image, where every photograph is a room the reader has already entered."
+      }
+    ];
+
+    function renderReadingList() {
+      const listContainer = document.getElementById('readingList');
+      const sorted = readingData.sort((a, b) => a.title.localeCompare(b.title));
+      
+      sorted.forEach(book => {
+        const li = document.createElement('li');
+        const titleEl = document.createElement('div');
+        titleEl.className = 'book-title';
+        
+        if (book.url) {
+          const link = document.createElement('a');
+          link.href = book.url;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.textContent = book.title;
+          titleEl.appendChild(link);
+        } else {
+          titleEl.textContent = book.title;
+        }
+        
+        const metaEl = document.createElement('div');
+        metaEl.className = 'book-meta';
+        metaEl.textContent = `${book.author} — ${book.year}`;
+        
+        const noteEl = document.createElement('p');
+        noteEl.className = 'book-note';
+        noteEl.textContent = book.note;
+        
+        li.appendChild(titleEl);
+        li.appendChild(metaEl);
+        li.appendChild(noteEl);
+        listContainer.appendChild(li);
+      });
+    }
+
+    renderReadingList();
   </script>
 
 </body>
