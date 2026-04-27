@@ -29,6 +29,127 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+
+    .snapshot-indicator {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 999;
+    }
+    .snapshot-indicator.show {
+      opacity: 1;
+    }
+    .snapshots-container {
+      margin: 2rem 0;
+    }
+    .snapshots-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .snapshot-item {
+      margin: 0 0 1.5rem 0;
+      padding: 1.5rem;
+      border: 1px solid rgba(26, 26, 26, 0.2);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .snapshot-item {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .snapshot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 0 1rem 0;
+    }
+    .snapshot-time {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+    .snapshot-date {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    @media (prefers-color-scheme: dark) {
+      .snapshot-date {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .snapshot-comparison {
+      margin: 1rem 0;
+      padding: 1rem;
+      border-left: 2px solid rgba(26, 26, 26, 0.3);
+      background: rgba(26, 26, 26, 0.03);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    @media (prefers-color-scheme: dark) {
+      .snapshot-comparison {
+        border-left-color: rgba(230, 230, 230, 0.3);
+        background: rgba(230, 230, 230, 0.03);
+      }
+    }
+    .snapshot-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .snapshot-button {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      color: var(--ink);
+      font-size: 0.85rem;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+    .snapshot-button:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.05);
+    }
+    .snapshots-empty {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .snapshots-empty {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .snapshot-help {
+      margin: 1rem 0 2rem 0;
+      padding: 1rem;
+      border-left: 2px solid rgba(26, 26, 26, 0.2);
+      background: rgba(26, 26, 26, 0.02);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    @media (prefers-color-scheme: dark) {
+      .snapshot-help {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+
 .thread-container {
       margin: 2rem 0;
     }
@@ -683,6 +804,16 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+
+    <div id="snapshots" class="page">
+      <h1>snapshots</h1>
+      <p>Capture the state of this site at any moment by pressing <code>s</code>. Return here to see what has changed since you last looked, and what has remained the same.</p>
+      <div class="snapshot-help">
+        <strong>How to use:</strong> Press <code>s</code> anywhere on the site to save a snapshot of the current page. Each snapshot records the date, time, and visible content. Return to this page to compare snapshots and see what has shifted.
+      </div>
+      <ul class="snapshots-list" id="snapshotsList"></ul>
+    </div>
+
     <div id="threads" class="page">
       <h1>threads</h1>
       <p>A thought you carry returns. You pick it up where you left it, and continue. Each thread holds all the moments you have returned to it, in the order they arrived. A conversation with yourself across days.</p>
@@ -779,6 +910,190 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+    const SNAPSHOTS_STORAGE_KEY = 'visitor_snapshots';
+
+    function getPageState() {
+      const mainEl = document.querySelector('main');
+      const activePageId = document.querySelector('.page.active')?.id || 'home';
+      const pageTitle = document.querySelector('.page.active h1')?.textContent || 'home';
+      const pageContent = mainEl ? mainEl.innerText.substring(0, 500) : '';
+      const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+      const textColor = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+      
+      return {
+        pageId: activePageId,
+        pageTitle: pageTitle,
+        content: pageContent,
+        bgColor: bgColor,
+        textColor: textColor,
+        navLinks: Array.from(document.querySelectorAll('nav a')).map(a => a.textContent)
+      };
+    }
+
+    function loadSnapshots() {
+      const stored = localStorage.getItem(SNAPSHOTS_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveSnapshots(snapshots) {
+      localStorage.setItem(SNAPSHOTS_STORAGE_KEY, JSON.stringify(snapshots));
+    }
+
+    function getDateTimeString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      return {
+        date: `${year}-${month}-${day}`,
+        time: `${hours}:${minutes}`,
+        timestamp: Date.now()
+      };
+    }
+
+    function createSnapshot() {
+      const state = getPageState();
+      const dateTime = getDateTimeString();
+      
+      return {
+        id: dateTime.timestamp,
+        date: dateTime.date,
+        time: dateTime.time,
+        timestamp: dateTime.timestamp,
+        state: state
+      };
+    }
+
+    function captureSnapshot() {
+      const snapshots = loadSnapshots();
+      const newSnapshot = createSnapshot();
+      snapshots.push(newSnapshot);
+      saveSnapshots(snapshots);
+      
+      showSnapshotIndicator();
+    }
+
+    function showSnapshotIndicator() {
+      let indicator = document.getElementById('snapshotIndicator');
+      if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'snapshotIndicator';
+        indicator.className = 'snapshot-indicator';
+        indicator.textContent = 'snapshot captured';
+        document.body.appendChild(indicator);
+      }
+      
+      indicator.classList.add('show');
+      setTimeout(() => {
+        indicator.classList.remove('show');
+      }, 2000);
+    }
+
+    function compareSnapshots(current, previous) {
+      const differences = [];
+      
+      if (current.state.pageId !== previous.state.pageId) {
+        differences.push(`page changed: ${previous.state.pageTitle} → ${current.state.pageTitle}`);
+      }
+      
+      if (current.state.navLinks.length !== previous.state.navLinks.length) {
+        differences.push(`navigation changed: ${previous.state.navLinks.length} links → ${current.state.navLinks.length} links`);
+      }
+      
+      if (current.state.content !== previous.state.content) {
+        differences.push('page content has changed');
+      }
+      
+      if (differences.length === 0) {
+        differences.push('no visible changes detected');
+      }
+      
+      return differences;
+    }
+
+    function renderSnapshots() {
+      const snapshotsList = document.getElementById('snapshotsList');
+      const snapshots = loadSnapshots();
+      
+      if (snapshots.length === 0) {
+        snapshotsList.innerHTML = '<div class="snapshots-empty">No snapshots yet. Press <code>s</code> to capture the current state of the site.</div>';
+        return;
+      }
+      
+      snapshotsList.innerHTML = '';
+      const sorted = snapshots.slice().reverse();
+      
+      sorted.forEach((snapshot, index) => {
+        const li = document.createElement('li');
+        li.className = 'snapshot-item';
+        
+        const header = document.createElement('div');
+        header.className = 'snapshot-header';
+        
+        const timeEl = document.createElement('div');
+        timeEl.className = 'snapshot-time';
+        timeEl.textContent = snapshot.time;
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'snapshot-date';
+        dateEl.textContent = snapshot.date;
+        
+        header.appendChild(timeEl);
+        header.appendChild(dateEl);
+        li.appendChild(header);
+        
+        const pageEl = document.createElement('div');
+        pageEl.style.fontSize = '0.9rem';
+        pageEl.style.marginBottom = '1rem';
+        pageEl.style.color = 'var(--ink)';
+        pageEl.textContent = `page: ${snapshot.state.pageTitle}`;
+        li.appendChild(pageEl);
+        
+        if (index < sorted.length - 1) {
+          const nextSnapshot = sorted[index + 1];
+          const differences = compareSnapshots(snapshot, nextSnapshot);
+          
+          const comparisonEl = document.createElement('div');
+          comparisonEl.className = 'snapshot-comparison';
+          comparisonEl.innerHTML = '<strong>since last snapshot:</strong><br>' + differences.map(d => '• ' + d).join('<br>');
+          li.appendChild(comparisonEl);
+        }
+        
+        snapshotsList.appendChild(li);
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        captureSnapshot();
+      }
+    });
+
+    const snapshotsNavLink = document.createElement('a');
+    snapshotsNavLink.href = '#snapshots';
+    snapshotsNavLink.className = 'nav-link';
+    snapshotsNavLink.setAttribute('data-page', 'snapshots');
+    snapshotsNavLink.textContent = 'snapshots';
+    document.querySelector('nav').appendChild(snapshotsNavLink);
+
+    const originalNavClick = document.addEventListener('click', function handleNavClick(e) {
+      if (e.target.classList.contains('nav-link')) {
+        setTimeout(() => {
+          if (document.getElementById('snapshots').classList.contains('active')) {
+            renderSnapshots();
+          }
+        }, 0);
+      }
+    });
+
+    renderSnapshots();
+</script>
+
 <script>
     const originalNoteFormSubmit = document.getElementById('noteForm').onsubmit;
     document.getElementById('noteForm').addEventListener('submit', (e) => {

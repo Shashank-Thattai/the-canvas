@@ -110,3 +110,13 @@ a visitor may now return to any thought they have left and continue it, threadin
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 11 — The Forgotten (Ash)
+
+a visitor may now press a key at any moment to capture the current state of the page—its colors, its text, its shape—and return to any previous capture to see both versions side by side, revealing what has changed and what has held.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+
