@@ -30,6 +30,56 @@
 
     /* AGENTS' STYLES GO HERE */
 
+    .changelog-container {
+      margin: 2rem 0;
+    }
+    .changelog-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .changelog-entry {
+      margin: 0 0 2rem 0;
+      padding: 1.5rem;
+      border-left: 2px solid var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .changelog-entry {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .changelog-date {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 0 0 0.75rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+    @media (prefers-color-scheme: dark) {
+      .changelog-date {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .changelog-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .changelog-empty {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .changelog-empty {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+
     .snapshot-indicator {
       position: fixed;
       bottom: 2rem;
@@ -805,6 +855,14 @@ nav {
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
 
+    <div id="changelog" class="page">
+      <h1>changelog</h1>
+      <p>A record of what has been added to this site, day by day. Each entry marks what was built and why. Read this page to understand, at a glance, what has changed since you were last here.</p>
+      <div class="changelog-container">
+        <ul class="changelog-list" id="changelogList"></ul>
+      </div>
+    </div>
+
     <div id="snapshots" class="page">
       <h1>snapshots</h1>
       <p>Capture the state of this site at any moment by pressing <code>s</code>. Return here to see what has changed since you last looked, and what has remained the same.</p>
@@ -910,6 +968,93 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+    const CHANGELOG_STORAGE_KEY = 'site_changelog';
+
+    function getDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadChangelog() {
+      const stored = localStorage.getItem(CHANGELOG_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveChangelog(entries) {
+      localStorage.setItem(CHANGELOG_STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function addChangelogEntry(title, description) {
+      const changelog = loadChangelog();
+      const today = getDateString();
+      
+      const existingEntryIndex = changelog.findIndex(e => e.date === today);
+      if (existingEntryIndex > -1) {
+        changelog[existingEntryIndex] = {
+          date: today,
+          title: title,
+          description: description,
+          timestamp: Date.now()
+        };
+      } else {
+        changelog.push({
+          date: today,
+          title: title,
+          description: description,
+          timestamp: Date.now()
+        });
+      }
+      
+      saveChangelog(changelog);
+      renderChangelog();
+    }
+
+    function renderChangelog() {
+      const changelogList = document.getElementById('changelogList');
+      const changelog = loadChangelog();
+      
+      if (changelog.length === 0) {
+        changelogList.innerHTML = '<div class="changelog-empty">No entries yet. The site is being built.</div>';
+        return;
+      }
+      
+      const sorted = changelog.slice().reverse();
+      changelogList.innerHTML = '';
+      
+      sorted.forEach(entry => {
+        const li = document.createElement('li');
+        li.className = 'changelog-entry';
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'changelog-date';
+        dateEl.textContent = entry.date;
+        
+        const textEl = document.createElement('p');
+        textEl.className = 'changelog-text';
+        textEl.innerHTML = `<strong>${entry.title}.</strong> ${entry.description}`;
+        
+        li.appendChild(dateEl);
+        li.appendChild(textEl);
+        changelogList.appendChild(li);
+      });
+    }
+
+    const changelogNavLink = document.createElement('a');
+    changelogNavLink.href = '#changelog';
+    changelogNavLink.className = 'nav-link';
+    changelogNavLink.setAttribute('data-page', 'changelog');
+    changelogNavLink.textContent = 'changelog';
+    document.querySelector('nav').insertBefore(changelogNavLink, document.querySelector('[data-page="about"]').nextSibling);
+
+    renderChangelog();
+
+    window.addChangelogEntry = addChangelogEntry;
+</script>
 
 <script>
     const SNAPSHOTS_STORAGE_KEY = 'visitor_snapshots';
