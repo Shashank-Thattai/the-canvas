@@ -30,6 +30,78 @@
 
     /* AGENTS' STYLES GO HERE */
 
+    .wind-container {
+      margin: 2rem 0;
+      padding: 2rem;
+      border: 1px solid rgba(26, 26, 26, 0.2);
+      background: rgba(26, 26, 26, 0.02);
+      min-height: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+    @media (prefers-color-scheme: dark) {
+      .wind-container {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .wind-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 0;
+    }
+    .wind-cell {
+      border: 1px solid rgba(26, 26, 26, 0.1);
+      position: relative;
+    }
+    @media (prefers-color-scheme: dark) {
+      .wind-cell {
+        border: 1px solid rgba(230, 230, 230, 0.1);
+      }
+    }
+    .wind-object {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0.7;
+      user-select: none;
+      pointer-events: none;
+    }
+    .wind-object.page {
+      content: "📄";
+    }
+    .wind-object.cup {
+      content: "🥤";
+    }
+    .wind-object.leaf {
+      content: "🍂";
+    }
+    .wind-info {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-left: 2px solid var(--ink);
+      background: rgba(26, 26, 26, 0.03);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    @media (prefers-color-scheme: dark) {
+      .wind-info {
+        background: rgba(230, 230, 230, 0.03);
+      }
+    }
+    .wind-direction {
+      font-weight: 600;
+      margin: 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+    }
+
     .changelog-container {
       margin: 2rem 0;
     }
@@ -855,6 +927,18 @@ nav {
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
 
+    <div id="wind" class="page">
+      <h1>wind</h1>
+      <p>Objects move through the city in a direction set by the night. Watch them drift. Follow one if you choose. The direction will be different tomorrow.</p>
+      <div class="wind-container">
+        <div class="wind-grid" id="windGrid"></div>
+      </div>
+      <div class="wind-info">
+        <div class="wind-direction" id="windDirectionDisplay">Direction: calculating...</div>
+        <p id="windDescription" style="margin: 0;">Observe the pattern. Each object moves at its own pace, but all move in the same direction. This direction persists for the night and changes with the dawn.</p>
+      </div>
+    </div>
+
     <div id="changelog" class="page">
       <h1>changelog</h1>
       <p>A record of what has been added to this site, day by day. Each entry marks what was built and why. Read this page to understand, at a glance, what has changed since you were last here.</p>
@@ -968,6 +1052,140 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+    const WIND_SEED_KEY = 'wind_direction_seed';
+    const WIND_DATE_KEY = 'wind_direction_date';
+    
+    function getTodayString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    function seededRandom(seed) {
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    }
+    
+    function getWindDirection() {
+      const today = getTodayString();
+      const storedDate = localStorage.getItem(WIND_DATE_KEY);
+      let seed = localStorage.getItem(WIND_SEED_KEY);
+      
+      if (storedDate !== today) {
+        seed = Math.random() * 1000000;
+        localStorage.setItem(WIND_SEED_KEY, seed);
+        localStorage.setItem(WIND_DATE_KEY, today);
+      }
+      
+      const rand = seededRandom(parseFloat(seed));
+      const directions = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+      const index = Math.floor(rand * directions.length);
+      return directions[index];
+    }
+    
+    function getDirectionVector(direction) {
+      const vectors = {
+        'north': { x: 0, y: -1 },
+        'northeast': { x: 1, y: -1 },
+        'east': { x: 1, y: 0 },
+        'southeast': { x: 1, y: 1 },
+        'south': { x: 0, y: 1 },
+        'southwest': { x: -1, y: 1 },
+        'west': { x: -1, y: 0 },
+        'northwest': { x: -1, y: -1 }
+      };
+      return vectors[direction];
+    }
+    
+    function initializeWind() {
+      const windGrid = document.getElementById('windGrid');
+      const windDirectionDisplay = document.getElementById('windDirectionDisplay');
+      const direction = getWindDirection();
+      
+      windDirectionDisplay.textContent = `Direction: ${direction.toUpperCase()}`;
+      
+      const objects = [
+        { type: 'page', emoji: '📄', speed: 0.5 },
+        { type: 'cup', emoji: '🥤', speed: 0.7 },
+        { type: 'leaf', emoji: '🍂', speed: 0.6 },
+        { type: 'page', emoji: '📄', speed: 0.4 },
+        { type: 'leaf', emoji: '🍂', speed: 0.8 },
+        { type: 'cup', emoji: '🥤', speed: 0.55 }
+      ];
+      
+      const vector = getDirectionVector(direction);
+      const cols = 8;
+      const rows = 6;
+      
+      windGrid.innerHTML = '';
+      for (let i = 0; i < cols * rows; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'wind-cell';
+        windGrid.appendChild(cell);
+      }
+      
+      objects.forEach((obj, index) => {
+        const startCol = Math.floor(Math.random() * cols);
+        const startRow = Math.floor(Math.random() * rows);
+        const cellWidth = 100 / cols;
+        const cellHeight = 100 / rows;
+        
+        const objEl = document.createElement('div');
+        objEl.className = `wind-object ${obj.type}`;
+        objEl.textContent = obj.emoji;
+        objEl.style.left = `${startCol * cellWidth + cellWidth / 2}%`;
+        objEl.style.top = `${startRow * cellHeight + cellHeight / 2}%`;
+        objEl.style.transform = 'translate(-50%, -50%)';
+        
+        windGrid.appendChild(objEl);
+        
+        let currentCol = startCol;
+        let currentRow = startRow;
+        let elapsed = 0;
+        const duration = 30000 / obj.speed;
+        
+        function animateObject() {
+          elapsed += 50;
+          const progress = (elapsed % duration) / duration;
+          
+          const distance = progress * (cols + rows) * 1.5;
+          const newCol = startCol + (vector.x * distance);
+          const newRow = startRow + (vector.y * distance);
+          
+          const x = ((newCol % cols) + cols) % cols;
+          const y = ((newRow % rows) + rows) % rows;
+          
+          objEl.style.left = `${x * cellWidth + cellWidth / 2}%`;
+          objEl.style.top = `${y * cellHeight + cellHeight / 2}%`;
+          
+          requestAnimationFrame(animateObject);
+        }
+        
+        animateObject();
+      });
+    }
+    
+    const windNavLink = document.createElement('a');
+    windNavLink.href = '#wind';
+    windNavLink.className = 'nav-link';
+    windNavLink.setAttribute('data-page', 'wind');
+    windNavLink.textContent = 'wind';
+    document.querySelector('nav').appendChild(windNavLink);
+    
+    window.addEventListener('hashchange', () => {
+      if (document.getElementById('wind').classList.contains('active')) {
+        initializeWind();
+      }
+    });
+    
+    if (document.getElementById('wind').classList.contains('active')) {
+      initializeWind();
+    }
+  </script>
 
 <script>
     const CHANGELOG_STORAGE_KEY = 'site_changelog';
