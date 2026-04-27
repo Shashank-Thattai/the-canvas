@@ -29,6 +29,79 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+
+.search-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .search-input-wrapper {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .search-input {
+      flex: 1;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+    .search-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-button {
+      padding: 0.75rem 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .search-button:hover {
+      opacity: 0.8;
+    }
+    .search-button.clear {
+      background: rgba(26, 26, 26, 0.3);
+    }
+    @media (prefers-color-scheme: dark) {
+      .search-button.clear {
+        background: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .search-results-info {
+      font-size: 0.9rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 0 0 1rem 0;
+    }
+    @media (prefers-color-scheme: dark) {
+      .search-results-info {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .search-no-results {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .search-no-results {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+
 .log-entry {
       margin: 0 0 2rem 0;
       padding: 1.5rem;
@@ -246,6 +319,22 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="browse" class="page">
+      <h1>browse</h1>
+      <p>All entries from your log, searchable by date or by word. Find what you wrote and have since forgotten.</p>
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search by word or date (YYYY-MM-DD)..." />
+          <div class="search-controls">
+            <button id="searchButton" class="search-button">search</button>
+            <button id="clearButton" class="search-button clear">clear</button>
+          </div>
+        </div>
+        <div id="searchInfo" class="search-results-info"></div>
+      </div>
+      <div id="browseResults"></div>
+    </div>
+
 <nav>
     <a href="#home" class="nav-link active" data-page="home">home</a>
     <a href="#about" class="nav-link" data-page="about">about</a>
@@ -286,6 +375,76 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const searchInfo = document.getElementById('searchInfo');
+    const browseResults = document.getElementById('browseResults');
+
+    function performSearch() {
+      const query = searchInput.value.trim().toLowerCase();
+      const log = loadLog();
+      
+      let results = log;
+      if (query) {
+        results = log.filter(entry => {
+          return entry.text.toLowerCase().includes(query) || entry.date.includes(query);
+        });
+      }
+      
+      results.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      if (results.length === 0) {
+        searchInfo.textContent = query ? `No entries match "${query}".` : '';
+        browseResults.innerHTML = query ? '<div class="search-no-results">Try a different word or date.</div>' : '<div class="search-no-results">Your log is empty.</div>';
+        return;
+      }
+      
+      searchInfo.textContent = query ? `Found ${results.length} ${results.length === 1 ? 'entry' : 'entries'}.` : `${results.length} ${results.length === 1 ? 'entry' : 'entries'} in your log.`;
+      browseResults.innerHTML = '';
+      
+      results.forEach(entry => {
+        const entryEl = document.createElement('div');
+        entryEl.className = 'log-entry';
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'log-entry-date';
+        dateEl.textContent = entry.date;
+        
+        const textEl = document.createElement('p');
+        textEl.className = 'log-entry-text';
+        textEl.textContent = entry.text;
+        
+        entryEl.appendChild(dateEl);
+        entryEl.appendChild(textEl);
+        browseResults.appendChild(entryEl);
+      });
+    }
+
+    searchButton.addEventListener('click', performSearch);
+    clearButton.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInfo.textContent = '';
+      browseResults.innerHTML = '';
+      searchInput.focus();
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    const browseNavLink = document.createElement('a');
+    browseNavLink.href = '#browse';
+    browseNavLink.className = 'nav-link';
+    browseNavLink.setAttribute('data-page', 'browse');
+    browseNavLink.textContent = 'browse';
+    document.querySelector('nav').insertBefore(browseNavLink, document.querySelector('[data-page="log"]').nextSibling);
+  </script>
+
 <script>
     const navLinks = document.querySelectorAll('.nav-link');
     const pages = document.querySelectorAll('.page');

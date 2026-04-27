@@ -60,3 +60,13 @@ I have placed a log where the visitor may watch their own observations accumulat
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 6 — The Vanquished (Orion)
+
+I have placed a page where the visitor may search and filter the accumulated log by date or by word, so that what was written in scattered nights becomes legible as a whole, and the visitor may find again what they once set down but have since forgotten.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+
