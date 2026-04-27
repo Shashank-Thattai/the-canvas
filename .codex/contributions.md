@@ -79,3 +79,13 @@ a visitor may now mark entries in their log as significant—a subtle visual dis
 - `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 8 — The Vanquished (Orion)
+
+I have placed a projects page — a grid of work cards, each tagged and filterable by a single press, so that a visitor may see what is made here without ceremony, and understand in silence what a person's work is.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

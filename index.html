@@ -29,6 +29,111 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+.projects-container {
+      margin: 2rem 0;
+    }
+    .projects-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 2rem 0 3rem 0;
+    }
+    .filter-tag {
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+    .filter-tag:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.05);
+    }
+    .filter-tag.active {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+    @media (prefers-color-scheme: dark) {
+      .filter-tag:hover {
+        background: rgba(230, 230, 230, 0.05);
+      }
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .project-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(26, 26, 26, 0.2);
+      background: rgba(26, 26, 26, 0.02);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .project-card:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.05);
+      transform: translateY(-2px);
+    }
+    @media (prefers-color-scheme: dark) {
+      .project-card {
+        background: rgba(230, 230, 230, 0.02);
+      }
+      .project-card:hover {
+        background: rgba(230, 230, 230, 0.05);
+      }
+    }
+    .project-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      color: var(--ink);
+    }
+    .project-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+      flex-grow: 1;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+    .project-tag {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(26, 26, 26, 0.1);
+      color: var(--ink);
+      border-radius: 2px;
+      letter-spacing: 0.01em;
+    }
+    @media (prefers-color-scheme: dark) {
+      .project-tag {
+        background: rgba(230, 230, 230, 0.1);
+      }
+    }
+    .projects-empty {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .projects-empty {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+
 .log-entry.marked {
       border-left-color: rgba(26, 26, 26, 0.5);
       background: rgba(26, 26, 26, 0.06);
@@ -354,6 +459,15 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="projects" class="page">
+      <h1>projects</h1>
+      <p>A collection of work. Select a tag to filter by discipline, year, or mode. What you choose to show first says more than the work itself.</p>
+      <div class="projects-container">
+        <div class="projects-filter" id="filterContainer"></div>
+        <div class="projects-grid" id="projectsGrid"></div>
+      </div>
+    </div>
+
     <div id="browse" class="page">
       <h1>browse</h1>
       <p>All entries from your log, searchable by date or by word. Find what you wrote and have since forgotten.</p>
@@ -410,6 +524,128 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+    <script>
+      const projectsData = [
+        {
+          title: "Threshold",
+          description: "A personal site built feature by feature, day by day. Navigation, reading list, notes, and a searchable log of observations.",
+          tags: ["web", "2024", "site"]
+        },
+        {
+          title: "The Long Count",
+          description: "A narrative game about a walker in a city that remembers. Built in vanilla JavaScript with procedural generation and state persistence.",
+          tags: ["game", "2024", "narrative"]
+        },
+        {
+          title: "Observations",
+          description: "A collection of short essays on attention, memory, and the weight of what we choose to keep.",
+          tags: ["writing", "2023", "essay"]
+        },
+        {
+          title: "Archive",
+          description: "A searchable index of readings, references, and sources organized by discipline and date.",
+          tags: ["web", "2024", "reference"]
+        },
+        {
+          title: "Patterns",
+          description: "Visual experiments in generative design, exploring the mathematics of growth and decay.",
+          tags: ["visual", "2023", "experiment"]
+        },
+        {
+          title: "Fragments",
+          description: "A collection of incomplete pieces—sketches, drafts, and abandoned starts that remain as records of thinking.",
+          tags: ["writing", "2024", "archive"]
+        }
+      ];
+
+      function getAllTags() {
+        const tags = new Set();
+        projectsData.forEach(project => {
+          project.tags.forEach(tag => tags.add(tag));
+        });
+        return Array.from(tags).sort();
+      }
+
+      function renderFilters() {
+        const filterContainer = document.getElementById('filterContainer');
+        const allTags = getAllTags();
+        
+        filterContainer.innerHTML = '';
+        
+        allTags.forEach(tag => {
+          const button = document.createElement('button');
+          button.className = 'filter-tag';
+          button.textContent = tag;
+          button.addEventListener('click', () => {
+            button.classList.toggle('active');
+            renderProjects();
+          });
+          filterContainer.appendChild(button);
+        });
+      }
+
+      function getActiveFilters() {
+        const buttons = document.querySelectorAll('.filter-tag.active');
+        return Array.from(buttons).map(btn => btn.textContent);
+      }
+
+      function renderProjects() {
+        const projectsGrid = document.getElementById('projectsGrid');
+        const activeFilters = getActiveFilters();
+        
+        let filtered = projectsData;
+        if (activeFilters.length > 0) {
+          filtered = projectsData.filter(project => {
+            return activeFilters.some(filter => project.tags.includes(filter));
+          });
+        }
+        
+        projectsGrid.innerHTML = '';
+        
+        if (filtered.length === 0) {
+          projectsGrid.innerHTML = '<div class="projects-empty">No projects match the selected tags.</div>';
+          return;
+        }
+        
+        filtered.forEach(project => {
+          const card = document.createElement('div');
+          card.className = 'project-card';
+          
+          const title = document.createElement('h3');
+          title.className = 'project-title';
+          title.textContent = project.title;
+          
+          const description = document.createElement('p');
+          description.className = 'project-description';
+          description.textContent = project.description;
+          
+          const tagsContainer = document.createElement('div');
+          tagsContainer.className = 'project-tags';
+          project.tags.forEach(tag => {
+            const tagEl = document.createElement('span');
+            tagEl.className = 'project-tag';
+            tagEl.textContent = tag;
+            tagsContainer.appendChild(tagEl);
+          });
+          
+          card.appendChild(title);
+          card.appendChild(description);
+          card.appendChild(tagsContainer);
+          projectsGrid.appendChild(card);
+        });
+      }
+
+      renderFilters();
+      renderProjects();
+
+      const projectsNavLink = document.createElement('a');
+      projectsNavLink.href = '#projects';
+      projectsNavLink.className = 'nav-link';
+      projectsNavLink.setAttribute('data-page', 'projects');
+      projectsNavLink.textContent = 'projects';
+      document.querySelector('nav').insertBefore(projectsNavLink, document.querySelector('[data-page="log"]'));
+    </script>
+
 <script>
     const MARKED_ENTRIES_KEY = 'marked_log_entries';
     const LOG_STORAGE_KEY = 'visitor_log';
