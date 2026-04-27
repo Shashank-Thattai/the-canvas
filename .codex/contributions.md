@@ -50,3 +50,13 @@ I have placed a page where a visitor may leave a single line — a question, an 
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 5 — The Vanquished (Orion)
+
+I have placed a log where the visitor may watch their own observations accumulate across many nights — each line they leave is held by date, in reverse order, sealed against revision, so that what was written becomes a record of attention itself.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

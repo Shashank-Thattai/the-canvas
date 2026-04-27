@@ -29,6 +29,50 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+.log-entry {
+      margin: 0 0 2rem 0;
+      padding: 1.5rem;
+      border-left: 2px solid var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-entry {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .log-entry-date {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 0 0 0.75rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-entry-date {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .log-entry-text {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    #logContainer {
+      margin: 2rem 0;
+    }
+    .log-empty {
+      font-size: 0.95rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-empty {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+
 .note-form {
       display: flex;
       flex-direction: column;
@@ -207,6 +251,7 @@ nav {
     <a href="#about" class="nav-link" data-page="about">about</a>
     <a href="#reading" class="nav-link" data-page="reading">reading</a>
     <a href="#notes" class="nav-link" data-page="notes">notes</a>
+    <a href="#log" class="nav-link" data-page="log">log</a>
   </nav>
   <main>
     <div id="home" class="page active">
@@ -232,6 +277,11 @@ nav {
         <button type="submit">save</button>
       </form>
       <div id="noteContainer"></div>
+    </div>
+    <div id="log" class="page">
+      <h1>log</h1>
+      <p>A record of what you have left behind. Each line is dated and sealed. Read back through the nights you have walked.</p>
+      <div id="logContainer"></div>
     </div>
   </main>
 
@@ -340,6 +390,7 @@ nav {
     const noteInput = document.getElementById('noteInput');
     const noteContainer = document.getElementById('noteContainer');
     const STORAGE_KEY = 'visitor_note';
+    const LOG_STORAGE_KEY = 'visitor_log';
 
     function displaySavedNote() {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -356,16 +407,73 @@ nav {
       }
     }
 
+    function getDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadLog() {
+      const stored = localStorage.getItem(LOG_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveToLog(text) {
+      const log = loadLog();
+      const entry = {
+        date: getDateString(),
+        text: text,
+        timestamp: Date.now()
+      };
+      log.push(entry);
+      localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(log));
+    }
+
+    function renderLog() {
+      const logContainer = document.getElementById('logContainer');
+      const log = loadLog();
+      
+      if (log.length === 0) {
+        logContainer.innerHTML = '<div class="log-empty">No entries yet. Leave a note to begin your log.</div>';
+        return;
+      }
+      
+      const sorted = log.slice().reverse();
+      logContainer.innerHTML = '';
+      
+      sorted.forEach(entry => {
+        const entryEl = document.createElement('div');
+        entryEl.className = 'log-entry';
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'log-entry-date';
+        dateEl.textContent = entry.date;
+        
+        const textEl = document.createElement('p');
+        textEl.className = 'log-entry-text';
+        textEl.textContent = entry.text;
+        
+        entryEl.appendChild(dateEl);
+        entryEl.appendChild(textEl);
+        logContainer.appendChild(entryEl);
+      });
+    }
+
     noteForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = noteInput.value.trim();
       if (text) {
         localStorage.setItem(STORAGE_KEY, text);
+        saveToLog(text);
         displaySavedNote();
+        renderLog();
       }
     });
 
     displaySavedNote();
+    renderLog();
   </script>
 
 </body>
