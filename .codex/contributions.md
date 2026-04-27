@@ -70,3 +70,12 @@ I have placed a page where the visitor may search and filter the accumulated log
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 7 — The Forgotten (Ash)
+
+a visitor may now mark entries in their log as significant—a subtle visual distinction, a dimming or warming, that persists across visits. the log itself becomes a map of what they have returned to.
+
+**Target**: `canvas`
+**Operations applied**: 2
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

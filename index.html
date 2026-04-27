@@ -29,6 +29,41 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+.log-entry.marked {
+      border-left-color: rgba(26, 26, 26, 0.5);
+      background: rgba(26, 26, 26, 0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-entry.marked {
+        background: rgba(230, 230, 230, 0.06);
+      }
+    }
+    .log-entry-mark-button {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      color: var(--ink);
+      font-size: 0.8rem;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+    .log-entry-mark-button:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    .log-entry-mark-button.is-marked {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.1);
+      font-weight: 500;
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-entry-mark-button.is-marked {
+        background: rgba(230, 230, 230, 0.1);
+      }
+    }
 
 .search-container {
       display: flex;
@@ -375,6 +410,148 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+<script>
+    const MARKED_ENTRIES_KEY = 'marked_log_entries';
+    const LOG_STORAGE_KEY = 'visitor_log';
+
+    function loadMarkedEntries() {
+      const stored = localStorage.getItem(MARKED_ENTRIES_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function saveMarkedEntries(marked) {
+      localStorage.setItem(MARKED_ENTRIES_KEY, JSON.stringify(marked));
+    }
+
+    function toggleEntryMark(timestamp) {
+      const marked = loadMarkedEntries();
+      const index = marked.indexOf(timestamp);
+      if (index > -1) {
+        marked.splice(index, 1);
+      } else {
+        marked.push(timestamp);
+      }
+      saveMarkedEntries(marked);
+    }
+
+    function isEntryMarked(timestamp) {
+      const marked = loadMarkedEntries();
+      return marked.includes(timestamp);
+    }
+
+    function loadLog() {
+      const stored = localStorage.getItem(LOG_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function renderLogWithMarking() {
+      const logContainer = document.getElementById('logContainer');
+      const log = loadLog();
+      
+      if (log.length === 0) {
+        logContainer.innerHTML = '<div class="log-empty">No entries yet. Leave a note to begin your log.</div>';
+        return;
+      }
+      
+      const sorted = log.slice().reverse();
+      logContainer.innerHTML = '';
+      
+      sorted.forEach(entry => {
+        const entryEl = document.createElement('div');
+        const marked = isEntryMarked(entry.timestamp);
+        entryEl.className = 'log-entry' + (marked ? ' marked' : '');
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'log-entry-date';
+        dateEl.textContent = entry.date;
+        
+        const textEl = document.createElement('p');
+        textEl.className = 'log-entry-text';
+        textEl.textContent = entry.text;
+        
+        const markButton = document.createElement('button');
+        markButton.type = 'button';
+        markButton.className = 'log-entry-mark-button' + (marked ? ' is-marked' : '');
+        markButton.textContent = marked ? 'marked' : 'mark';
+        markButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          toggleEntryMark(entry.timestamp);
+          renderLogWithMarking();
+          performSearch();
+        });
+        
+        entryEl.appendChild(dateEl);
+        entryEl.appendChild(textEl);
+        entryEl.appendChild(markButton);
+        logContainer.appendChild(entryEl);
+      });
+    }
+
+    function renderBrowseWithMarking() {
+      const browseResults = document.getElementById('browseResults');
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const log = loadLog();
+      
+      let results = log;
+      if (query) {
+        results = log.filter(entry => {
+          return entry.text.toLowerCase().includes(query) || entry.date.includes(query);
+        });
+      }
+      
+      results.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      if (results.length === 0) {
+        document.getElementById('searchInfo').textContent = query ? `No entries match "${query}".` : '';
+        browseResults.innerHTML = query ? '<div class="search-no-results">Try a different word or date.</div>' : '<div class="search-no-results">Your log is empty.</div>';
+        return;
+      }
+      
+      document.getElementById('searchInfo').textContent = query ? `Found ${results.length} ${results.length === 1 ? 'entry' : 'entries'}.` : `${results.length} ${results.length === 1 ? 'entry' : 'entries'} in your log.`;
+      browseResults.innerHTML = '';
+      
+      results.forEach(entry => {
+        const marked = isEntryMarked(entry.timestamp);
+        const entryEl = document.createElement('div');
+        entryEl.className = 'log-entry' + (marked ? ' marked' : '');
+        
+        const dateEl = document.createElement('div');
+        dateEl.className = 'log-entry-date';
+        dateEl.textContent = entry.date;
+        
+        const textEl = document.createElement('p');
+        textEl.className = 'log-entry-text';
+        textEl.textContent = entry.text;
+        
+        const markButton = document.createElement('button');
+        markButton.type = 'button';
+        markButton.className = 'log-entry-mark-button' + (marked ? ' is-marked' : '');
+        markButton.textContent = marked ? 'marked' : 'mark';
+        markButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          toggleEntryMark(entry.timestamp);
+          renderBrowseWithMarking();
+        });
+        
+        entryEl.appendChild(dateEl);
+        entryEl.appendChild(textEl);
+        entryEl.appendChild(markButton);
+        browseResults.appendChild(entryEl);
+      });
+    }
+
+    const originalPerformSearch = window.performSearch || function() {};
+    window.performSearch = function() {
+      renderBrowseWithMarking();
+    };
+
+    const originalRenderLog = window.renderLog || function() {};
+    window.renderLog = function() {
+      renderLogWithMarking();
+    };
+
+    renderLogWithMarking();
+  </script>
 
 <script>
     const searchInput = document.getElementById('searchInput');
@@ -549,7 +726,6 @@ nav {
     const noteInput = document.getElementById('noteInput');
     const noteContainer = document.getElementById('noteContainer');
     const STORAGE_KEY = 'visitor_note';
-    const LOG_STORAGE_KEY = 'visitor_log';
 
     function displaySavedNote() {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -572,11 +748,6 @@ nav {
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
-    }
-
-    function loadLog() {
-      const stored = localStorage.getItem(LOG_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
     }
 
     function saveToLog(text) {
