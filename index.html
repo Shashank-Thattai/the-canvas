@@ -29,6 +29,103 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+
+.contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .contact-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .contact-form-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .contact-form-group input,
+    .contact-form-group textarea {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      transition: border-color 0.2s;
+    }
+    .contact-form-group input:focus,
+    .contact-form-group textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+    .contact-form-group textarea {
+      resize: vertical;
+      min-height: 8rem;
+      line-height: 1.6;
+    }
+    .contact-form-submit {
+      align-self: flex-start;
+      padding: 0.75rem 1.5rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .contact-form-submit:hover {
+      opacity: 0.8;
+    }
+    .contact-form-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .contact-confirmation {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border-left: 2px solid var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .contact-confirmation {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .contact-confirmation-title {
+      font-weight: 600;
+      margin: 0 0 0.75rem 0;
+      font-size: 1.05rem;
+    }
+    .contact-confirmation-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .contact-error {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border-left: 2px solid rgba(200, 50, 50, 0.7);
+      background: rgba(200, 50, 50, 0.05);
+    }
+    .contact-error-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: rgba(26, 26, 26, 0.8);
+    }
+    @media (prefers-color-scheme: dark) {
+      .contact-error-text {
+        color: rgba(230, 230, 230, 0.8);
+      }
+    }
+
 .projects-container {
       margin: 2rem 0;
     }
@@ -459,6 +556,32 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+
+    <div id="contact" class="page">
+      <h1>contact</h1>
+      <p>If you have read something here that moved you, or if you wish to speak with the person behind this site, you may do so. Write below. Your message will be received.</p>
+      <form class="contact-form" id="contactForm">
+        <div class="contact-form-group">
+          <label for="contactName">Your name</label>
+          <input type="text" id="contactName" name="name" required />
+        </div>
+        <div class="contact-form-group">
+          <label for="contactEmail">Your email</label>
+          <input type="email" id="contactEmail" name="email" required />
+        </div>
+        <div class="contact-form-group">
+          <label for="contactSubject">Subject</label>
+          <input type="text" id="contactSubject" name="subject" required />
+        </div>
+        <div class="contact-form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" name="message" required></textarea>
+        </div>
+        <button type="submit" class="contact-form-submit">send</button>
+      </form>
+      <div id="contactResult"></div>
+    </div>
+
     <div id="projects" class="page">
       <h1>projects</h1>
       <p>A collection of work. Select a tag to filter by discipline, year, or mode. What you choose to show first says more than the work itself.</p>
@@ -524,6 +647,68 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+    const contactForm = document.getElementById('contactForm');
+    const contactResult = document.getElementById('contactResult');
+    const submitButton = contactForm.querySelector('.contact-form-submit');
+
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      submitButton.disabled = true;
+      const originalText = submitButton.textContent;
+      submitButton.textContent = 'sending...';
+      
+      const formData = new FormData(contactForm);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        subject: formData.get('subject'),
+        message: formData.get('message')
+      };
+      
+      try {
+        const response = await fetch('https://formspree.io/f/xyzgwqpd', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          contactResult.innerHTML = `
+            <div class="contact-confirmation">
+              <div class="contact-confirmation-title">Message received</div>
+              <p class="contact-confirmation-text">Your message has been sent. I will read what you have written, and I will respond when I am able. Thank you for reaching across the threshold.</p>
+            </div>
+          `;
+          contactForm.reset();
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        } else {
+          throw new Error('Form submission failed');
+        }
+      } catch (error) {
+        contactResult.innerHTML = `
+          <div class="contact-error">
+            <p class="contact-error-text">There was an error sending your message. Please try again, or contact me directly if the problem persists.</p>
+          </div>
+        `;
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+
+    const contactNavLink = document.createElement('a');
+    contactNavLink.href = '#contact';
+    contactNavLink.className = 'nav-link';
+    contactNavLink.setAttribute('data-page', 'contact');
+    contactNavLink.textContent = 'contact';
+    document.querySelector('nav').appendChild(contactNavLink);
+  </script>
+
     <script>
       const projectsData = [
         {
