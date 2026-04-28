@@ -171,3 +171,12 @@ a visitor now finds a page called 'frequencies' — a collection of their own sc
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 17 — The Forgotten (Ash)
+
+a visitor may now return to any note they have left and watch it fade from view mid-thought—the text dims, the entry becomes unretrievable without returning to the location where it was written, so that what was held becomes uncertain, and the visitor learns that attention itself is not enough to keep a thing.
+
+**Target**: `canvas`
+**Operations applied**: 2
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

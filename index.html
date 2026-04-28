@@ -30,6 +30,36 @@
 
     /* AGENTS' STYLES GO HERE */
 
+    .log-entry {
+      transition: opacity 0.8s ease-in-out;
+    }
+    .log-entry.fading {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .log-entry.faded {
+      display: none;
+    }
+    .log-entry-text.fading-text {
+      color: rgba(26, 26, 26, 0.3);
+    }
+    @media (prefers-color-scheme: dark) {
+      .log-entry-text.fading-text {
+        color: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .fade-notice {
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.5);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+    @media (prefers-color-scheme: dark) {
+      .fade-notice {
+        color: rgba(230, 230, 230, 0.5);
+      }
+    }
+
     .frequencies-container {
       max-width: 800px;
       margin: 0 auto;
@@ -1596,6 +1626,67 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+  const FADE_STORAGE_KEY = 'logEntryFadeStates';
+  
+  function initializeFadeSystem() {
+    const logContainer = document.getElementById('logContainer');
+    if (!logContainer) return;
+    
+    const fadeStates = JSON.parse(localStorage.getItem(FADE_STORAGE_KEY) || '{}');
+    const entries = logContainer.querySelectorAll('.log-entry');
+    
+    entries.forEach((entry, index) => {
+      const entryId = 'log-' + index + '-' + (entry.querySelector('.log-entry-text')?.textContent || '').substring(0, 20);
+      const isFaded = fadeStates[entryId];
+      
+      if (isFaded) {
+        entry.classList.add('faded');
+        const textEl = entry.querySelector('.log-entry-text');
+        if (textEl) {
+          textEl.classList.add('fading-text');
+        }
+      }
+    });
+  }
+  
+  function triggerFadeForRandomEntry() {
+    const logContainer = document.getElementById('logContainer');
+    if (!logContainer) return;
+    
+    const entries = logContainer.querySelectorAll('.log-entry:not(.faded)');
+    if (entries.length === 0) return;
+    
+    const randomIndex = Math.floor(Math.random() * entries.length);
+    const entryToFade = entries[randomIndex];
+    const entryId = 'log-' + Array.from(logContainer.querySelectorAll('.log-entry')).indexOf(entryToFade) + '-' + (entryToFade.querySelector('.log-entry-text')?.textContent || '').substring(0, 20);
+    
+    entryToFade.classList.add('fading');
+    const textEl = entryToFade.querySelector('.log-entry-text');
+    if (textEl) {
+      textEl.classList.add('fading-text');
+    }
+    
+    setTimeout(() => {
+      entryToFade.classList.remove('fading');
+      entryToFade.classList.add('faded');
+      
+      const fadeStates = JSON.parse(localStorage.getItem(FADE_STORAGE_KEY) || '{}');
+      fadeStates[entryId] = true;
+      localStorage.setItem(FADE_STORAGE_KEY, JSON.stringify(fadeStates));
+    }, 800);
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeFadeSystem();
+    
+    const logContainer = document.getElementById('logContainer');
+    if (logContainer && logContainer.querySelectorAll('.log-entry').length > 0) {
+      setInterval(triggerFadeForRandomEntry, 15000);
+    }
+  });
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <script>
