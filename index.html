@@ -29,6 +29,213 @@
     }
 
     /* AGENTS' STYLES GO HERE */
+
+    .habit-tracker-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .habit-tracker-header {
+      margin-bottom: 2rem;
+    }
+    .habit-tracker-header h1 {
+      margin: 0 0 1rem 0;
+      font-size: 1.75rem;
+    }
+    .habit-tracker-header p {
+      margin: 0;
+      color: rgba(26, 26, 26, 0.7);
+      line-height: 1.6;
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-tracker-header p {
+        color: rgba(230, 230, 230, 0.7);
+      }
+    }
+    .habit-month-selector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+    .habit-month-selector button {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .habit-month-selector button:hover {
+      opacity: 0.6;
+    }
+    .habit-month-label {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .habit-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .habit-weekday-header {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.5rem;
+      color: rgba(26, 26, 26, 0.5);
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-weekday-header {
+        color: rgba(230, 230, 230, 0.5);
+      }
+    }
+    .habit-day-cell {
+      aspect-ratio: 1;
+      border: 1px solid rgba(26, 26, 26, 0.2);
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--paper);
+      position: relative;
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-day-cell {
+        border-color: rgba(230, 230, 230, 0.2);
+      }
+    }
+    .habit-day-cell.empty {
+      color: rgba(26, 26, 26, 0.3);
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-day-cell.empty {
+        color: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .habit-day-cell.filled {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.05);
+      font-weight: 600;
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-day-cell.filled {
+        background: rgba(230, 230, 230, 0.05);
+      }
+    }
+    .habit-day-cell:hover {
+      border-color: var(--ink);
+    }
+    .habit-day-number {
+      font-size: 0.9rem;
+    }
+    .habit-entry-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .habit-entry-modal.open {
+      display: flex;
+    }
+    .habit-entry-modal-content {
+      background: var(--paper);
+      padding: 2rem;
+      border: 1px solid var(--ink);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .habit-entry-modal-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+      padding-bottom: 1rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-entry-modal-header {
+        border-bottom-color: rgba(230, 230, 230, 0.1);
+      }
+    }
+    .habit-entry-modal-date {
+      font-size: 0.9rem;
+      color: rgba(26, 26, 26, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      .habit-entry-modal-date {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .habit-entry-modal-title {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+    .habit-entry-modal-text {
+      margin: 0 0 1.5rem 0;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .habit-entry-modal-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    .habit-entry-modal-button {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .habit-entry-modal-button:hover {
+      opacity: 0.6;
+    }
+    .habit-entry-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .habit-entry-form textarea {
+      padding: 1rem;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 120px;
+    }
+    .habit-entry-form button {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .habit-entry-form button:hover {
+      opacity: 0.6;
+    }
+
 .anchor-thought-container {
       margin: 0 0 2rem 0;
       padding: 1.5rem;
@@ -1004,6 +1211,43 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="tracker" class="page">
+      <div class="habit-tracker-container">
+        <div class="habit-tracker-header">
+          <h1>daily</h1>
+          <p>A record of what you have done, read, or made. Each day you mark becomes a thread in the shape of your month. The calendar shows presence and absence without judgment.</p>
+        </div>
+        <div class="habit-month-selector">
+          <button id="prevMonth" type="button">← previous</button>
+          <span class="habit-month-label" id="monthLabel"></span>
+          <button id="nextMonth" type="button">next →</button>
+        </div>
+        <div class="habit-calendar" id="habitCalendar"></div>
+      </div>
+      <div class="habit-entry-modal" id="entryModal">
+        <div class="habit-entry-modal-content">
+          <div class="habit-entry-modal-header">
+            <div class="habit-entry-modal-date" id="modalDate"></div>
+            <h2 class="habit-entry-modal-title" id="modalTitle"></h2>
+          </div>
+          <div id="viewMode">
+            <p class="habit-entry-modal-text" id="modalText"></p>
+            <div class="habit-entry-modal-buttons">
+              <button class="habit-entry-modal-button" id="editButton">edit</button>
+              <button class="habit-entry-modal-button" id="closeButton">close</button>
+            </div>
+          </div>
+          <div id="editMode" style="display: none;">
+            <form class="habit-entry-form" id="entryForm">
+              <textarea id="entryText" placeholder="What did you do, read, or make today?" maxlength="2000"></textarea>
+              <button type="submit">save</button>
+            </form>
+            <button class="habit-entry-modal-button" id="cancelButton">cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="anchorThoughtWidget" class="anchor-thought-container" style="display: none;">
       <div class="anchor-thought-label">your thought</div>
       <div id="anchorThoughtDisplay" class="anchor-thought-display"></div>
@@ -1142,6 +1386,191 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      const navItems = nav.querySelectorAll('a');
+      const existingPages = Array.from(navItems).map(link => {
+        return link.getAttribute('data-page');
+      });
+
+      if (!existingPages.includes('tracker')) {
+        const trackerLink = document.createElement('a');
+        trackerLink.href = '#tracker';
+        trackerLink.className = 'nav-link';
+        trackerLink.setAttribute('data-page', 'tracker');
+        trackerLink.textContent = 'daily';
+        nav.appendChild(trackerLink);
+      }
+    }
+  });
+</script>
+
+<script>
+  const HABIT_STORAGE_PREFIX = 'habit_entry_';
+  const habitCalendar = document.getElementById('habitCalendar');
+  const monthLabel = document.getElementById('monthLabel');
+  const prevMonthBtn = document.getElementById('prevMonth');
+  const nextMonthBtn = document.getElementById('nextMonth');
+  const entryModal = document.getElementById('entryModal');
+  const modalDate = document.getElementById('modalDate');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+  const viewMode = document.getElementById('viewMode');
+  const editMode = document.getElementById('editMode');
+  const entryForm = document.getElementById('entryForm');
+  const entryText = document.getElementById('entryText');
+  const editButton = document.getElementById('editButton');
+  const closeButton = document.getElementById('closeButton');
+  const cancelButton = document.getElementById('cancelButton');
+
+  let currentDate = new Date();
+  let selectedDate = null;
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  function getStorageKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return HABIT_STORAGE_PREFIX + year + '-' + month + '-' + day;
+  }
+
+  function getEntryForDate(date) {
+    const key = getStorageKey(date);
+    return localStorage.getItem(key) || '';
+  }
+
+  function saveEntryForDate(date, text) {
+    const key = getStorageKey(date);
+    if (text.trim()) {
+      localStorage.setItem(key, text);
+    } else {
+      localStorage.removeItem(key);
+    }
+  }
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
+  }
+
+  function renderCalendar() {
+    habitCalendar.innerHTML = '';
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    monthLabel.textContent = monthNames[month] + ' ' + year;
+
+    for (let i = 0; i < 7; i++) {
+      const header = document.createElement('div');
+      header.className = 'habit-weekday-header';
+      header.textContent = dayNames[i];
+      habitCalendar.appendChild(header);
+    }
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+    let currentCell = new Date(startDate);
+    while (currentCell <= lastDay || currentCell.getDay() !== 0) {
+      const cell = document.createElement('div');
+      cell.className = 'habit-day-cell';
+
+      if (currentCell.getMonth() !== month) {
+        cell.classList.add('empty');
+        cell.textContent = currentCell.getDate();
+      } else {
+        const entry = getEntryForDate(currentCell);
+        if (entry) {
+          cell.classList.add('filled');
+        } else {
+          cell.classList.add('empty');
+        }
+        cell.textContent = currentCell.getDate();
+        cell.addEventListener('click', () => openEntryModal(new Date(currentCell)));
+      }
+
+      habitCalendar.appendChild(cell);
+      currentCell.setDate(currentCell.getDate() + 1);
+    }
+  }
+
+  function openEntryModal(date) {
+    selectedDate = date;
+    const entry = getEntryForDate(date);
+    const dateStr = formatDate(date);
+    const dayName = dayNames[date.getDay()];
+    const monthName = monthNames[date.getMonth()];
+
+    modalDate.textContent = dayName + ', ' + monthName + ' ' + date.getDate();
+    modalTitle.textContent = dateStr;
+    modalText.textContent = entry || '(no entry)';
+    entryText.value = entry;
+
+    if (entry) {
+      viewMode.style.display = 'block';
+      editMode.style.display = 'none';
+    } else {
+      viewMode.style.display = 'none';
+      editMode.style.display = 'block';
+    }
+
+    entryModal.classList.add('open');
+  }
+
+  function closeModal() {
+    entryModal.classList.remove('open');
+    selectedDate = null;
+  }
+
+  editButton.addEventListener('click', () => {
+    viewMode.style.display = 'none';
+    editMode.style.display = 'block';
+    entryText.focus();
+  });
+
+  closeButton.addEventListener('click', closeModal);
+  cancelButton.addEventListener('click', () => {
+    viewMode.style.display = 'block';
+    editMode.style.display = 'none';
+  });
+
+  entryForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (selectedDate) {
+      saveEntryForDate(selectedDate, entryText.value);
+      renderCalendar();
+      closeModal();
+    }
+  });
+
+  prevMonthBtn.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  });
+
+  nextMonthBtn.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  entryModal.addEventListener('click', (e) => {
+    if (e.target === entryModal) {
+      closeModal();
+    }
+  });
+
+  renderCalendar();
+</script>
+
 <script>
     const ANCHOR_THOUGHT_KEY = 'anchor_thought';
     const anchorThoughtWidget = document.getElementById('anchorThoughtWidget');
@@ -1615,25 +2044,6 @@ nav {
 </script>
 
 <script>
-    const originalNoteFormSubmit = document.getElementById('noteForm').onsubmit;
-    document.getElementById('noteForm').addEventListener('submit', (e) => {
-      const text = document.getElementById('noteInput').value.trim();
-      if (text) {
-        const threads = loadThreads();
-        const existingThread = threads.find(t => t.title === text.substring(0, 50));
-        if (!existingThread) {
-          const newThread = createThread(text);
-          threads.push(newThread);
-          saveThreads(threads);
-          if (document.getElementById('threads').classList.contains('active')) {
-            renderThreads();
-          }
-        }
-      }
-    });
-  </script>
-
-<script>
     const THREADS_STORAGE_KEY = 'visitor_threads';
 
     function loadThreads() {
@@ -1645,7 +2055,7 @@ nav {
       localStorage.setItem(THREADS_STORAGE_KEY, JSON.stringify(threads));
     }
 
-    function getDateString() {
+    function getDateStringThreads() {
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1657,11 +2067,11 @@ nav {
       return {
         id: Date.now(),
         title: initialText.substring(0, 50),
-        created: getDateString(),
+        created: getDateStringThreads(),
         responses: [
           {
             text: initialText,
-            date: getDateString(),
+            date: getDateStringThreads(),
             timestamp: Date.now()
           }
         ]
@@ -1674,7 +2084,7 @@ nav {
       if (thread) {
         thread.responses.push({
           text: responseText,
-          date: getDateString(),
+          date: getDateStringThreads(),
           timestamp: Date.now()
         });
         saveThreads(threads);
@@ -2098,12 +2508,10 @@ nav {
       });
     }
 
-    const originalPerformSearch = window.performSearch || function() {};
     window.performSearch = function() {
       renderBrowseWithMarking();
     };
 
-    const originalRenderLog = window.renderLog || function() {};
     window.renderLog = function() {
       renderLogWithMarking();
     };
@@ -2118,7 +2526,7 @@ nav {
     const searchInfo = document.getElementById('searchInfo');
     const browseResults = document.getElementById('browseResults');
 
-    function performSearch() {
+    function performSearch2() {
       const query = searchInput.value.trim().toLowerCase();
       const log = loadLog();
       
@@ -2158,7 +2566,7 @@ nav {
       });
     }
 
-    searchButton.addEventListener('click', performSearch);
+    searchButton.addEventListener('click', performSearch2);
     clearButton.addEventListener('click', () => {
       searchInput.value = '';
       searchInfo.textContent = '';
@@ -2168,7 +2576,7 @@ nav {
 
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        performSearch();
+        performSearch2();
       }
     });
 
@@ -2300,7 +2708,7 @@ nav {
       }
     }
 
-    function getDateString() {
+    function getDateStringLog() {
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -2311,7 +2719,7 @@ nav {
     function saveToLog(text) {
       const log = loadLog();
       const entry = {
-        date: getDateString(),
+        date: getDateStringLog(),
         text: text,
         timestamp: Date.now()
       };
