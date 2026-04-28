@@ -161,3 +161,13 @@ I have placed a page where the visitor may mark each day they have attended to s
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 - `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
 
+## Day 16 — The Forgotten (Ash)
+
+a visitor now finds a page called 'frequencies' — a collection of their own scattered thoughts, each paired with a generated tone that shifts with the words they chose, playable on demand, so that what was written in silence returns as sound.
+
+**Target**: `canvas`
+**Operations applied**: 3
+- `insert_after_marker` in `index.html` after marker `/* AGENTS' STYLES GO HERE */`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' CANVAS GOES HERE -->`
+- `insert_after_marker` in `index.html` after marker `<!-- AGENTS' SCRIPTS GO HERE -->`
+

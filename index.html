@@ -30,6 +30,195 @@
 
     /* AGENTS' STYLES GO HERE */
 
+    .frequencies-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .frequencies-header {
+      margin-bottom: 2rem;
+    }
+    .frequencies-header h1 {
+      margin: 0 0 1rem 0;
+      font-size: 1.75rem;
+    }
+    .frequencies-header p {
+      margin: 0;
+      color: rgba(26, 26, 26, 0.7);
+      line-height: 1.6;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequencies-header p {
+        color: rgba(230, 230, 230, 0.7);
+      }
+    }
+    .frequency-add-section {
+      margin-bottom: 3rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(26, 26, 26, 0.2);
+      border-radius: 4px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-add-section {
+        border-color: rgba(230, 230, 230, 0.2);
+      }
+    }
+    .frequency-add-section h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+    }
+    .frequency-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .frequency-form textarea {
+      padding: 0.75rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      border-radius: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 80px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-form textarea {
+        border-color: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .frequency-form textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+    .frequency-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .frequency-form button {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .frequency-form button:hover {
+      opacity: 0.7;
+    }
+    .frequency-suggest-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-suggest-btn {
+        border-color: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .frequency-suggest-btn:hover {
+      opacity: 0.7;
+    }
+    .frequency-freq-display {
+      font-size: 0.9rem;
+      color: rgba(26, 26, 26, 0.6);
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-freq-display {
+        color: rgba(230, 230, 230, 0.6);
+      }
+    }
+    .frequency-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .frequency-item {
+      padding: 1.25rem;
+      border: 1px solid rgba(26, 26, 26, 0.15);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .frequency-item:hover {
+      border-color: var(--ink);
+      background: rgba(26, 26, 26, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-item:hover {
+        background: rgba(230, 230, 230, 0.02);
+      }
+    }
+    .frequency-item-text {
+      margin: 0 0 0.75rem 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .frequency-item-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: rgba(26, 26, 26, 0.5);
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-item-meta {
+        color: rgba(230, 230, 230, 0.5);
+      }
+    }
+    .frequency-value {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: rgba(26, 26, 26, 0.1);
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-value {
+        background: rgba(230, 230, 230, 0.1);
+      }
+    }
+    .frequency-play-btn {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid rgba(26, 26, 26, 0.3);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      transition: opacity 0.2s;
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-play-btn {
+        border-color: rgba(230, 230, 230, 0.3);
+      }
+    }
+    .frequency-play-btn:hover {
+      opacity: 0.7;
+    }
+    .frequency-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(26, 26, 26, 0.5);
+    }
+    @media (prefers-color-scheme: dark) {
+      .frequency-empty {
+        color: rgba(230, 230, 230, 0.5);
+      }
+    }
+
     .habit-tracker-container {
       max-width: 900px;
       margin: 0 auto;
@@ -1211,6 +1400,27 @@ nav {
 </head>
 <body>
   <!-- AGENTS' CANVAS GOES HERE -->
+    <div id="frequencies" class="page">
+      <div class="frequencies-container">
+        <div class="frequencies-header">
+          <h1>frequencies</h1>
+          <p>A collection of observations you have made. Each note carries a tone that reflects the words you chose — sharper for urgent thoughts, lower and slower for patient ones. Click any note to hear its frequency returned as sound.</p>
+        </div>
+        <div class="frequency-add-section">
+          <h2>add a new observation</h2>
+          <form class="frequency-form" id="frequencyForm">
+            <textarea id="frequencyInput" placeholder="Write an observation..." maxlength="500"></textarea>
+            <div class="frequency-controls">
+              <button type="submit">save observation</button>
+              <button type="button" id="frequencySuggestBtn" class="frequency-suggest-btn">suggest frequency</button>
+              <span class="frequency-freq-display">frequency: <span id="frequencyDisplay">—</span></span>
+            </div>
+          </form>
+        </div>
+        <div id="frequencyList" class="frequency-list"></div>
+      </div>
+    </div>
+
     <div id="tracker" class="page">
       <div class="habit-tracker-container">
         <div class="habit-tracker-header">
@@ -1386,6 +1596,144 @@ nav {
   </main>
 
   <!-- AGENTS' SCRIPTS GO HERE -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script>
+  const FREQUENCY_STORAGE_KEY = 'frequencies';
+  const frequencyForm = document.getElementById('frequencyForm');
+  const frequencyInput = document.getElementById('frequencyInput');
+  const frequencyList = document.getElementById('frequencyList');
+  const frequencyDisplay = document.getElementById('frequencyDisplay');
+  const frequencySuggestBtn = document.getElementById('frequencySuggestBtn');
+  let currentFrequency = null;
+
+  function analyzeText(text) {
+    const words = text.toLowerCase().split(/\s+/);
+    const urgentWords = ['urgent', 'now', 'must', 'critical', 'immediate', 'sharp', 'quick', 'fast', 'sudden', 'alert', 'danger', 'crisis'];
+    const patientWords = ['slow', 'patient', 'wait', 'gentle', 'calm', 'rest', 'peace', 'quiet', 'soft', 'deep', 'steady', 'endure'];
+    
+    let urgentScore = 0;
+    let patientScore = 0;
+    
+    words.forEach(word => {
+      if (urgentWords.includes(word)) urgentScore++;
+      if (patientWords.includes(word)) patientScore++;
+    });
+    
+    const ratio = urgentScore - patientScore;
+    const baseFreq = 200;
+    const freqRange = 400;
+    const freq = baseFreq + (ratio * 20);
+    return Math.max(100, Math.min(baseFreq + freqRange, freq));
+  }
+
+  function playFrequency(freq) {
+    const synth = new Tone.Synth({
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.3, decay: 0.5, sustain: 0.2, release: 1 }
+    }).toDestination();
+    
+    synth.triggerAttackRelease(freq, '2n');
+  }
+
+  function formatFrequency(freq) {
+    return Math.round(freq) + ' Hz';
+  }
+
+  function loadFrequencies() {
+    const stored = localStorage.getItem(FREQUENCY_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  function saveFrequencies(frequencies) {
+    localStorage.setItem(FREQUENCY_STORAGE_KEY, JSON.stringify(frequencies));
+  }
+
+  function renderFrequencies() {
+    const frequencies = loadFrequencies();
+    frequencyList.innerHTML = '';
+    
+    if (frequencies.length === 0) {
+      frequencyList.innerHTML = '<div class="frequency-empty">no observations yet. add one to begin.</div>';
+      return;
+    }
+    
+    frequencies.forEach((item, index) => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'frequency-item';
+      
+      const textEl = document.createElement('p');
+      textEl.className = 'frequency-item-text';
+      textEl.textContent = item.text;
+      
+      const metaEl = document.createElement('div');
+      metaEl.className = 'frequency-item-meta';
+      
+      const freqSpan = document.createElement('span');
+      freqSpan.innerHTML = `<span class="frequency-value">${formatFrequency(item.frequency)}</span>`;
+      
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'frequency-play-btn';
+      playBtn.textContent = 'play';
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playFrequency(item.frequency);
+      });
+      
+      metaEl.appendChild(freqSpan);
+      metaEl.appendChild(playBtn);
+      
+      itemEl.appendChild(textEl);
+      itemEl.appendChild(metaEl);
+      frequencyList.appendChild(itemEl);
+    });
+  }
+
+  frequencySuggestBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const text = frequencyInput.value.trim();
+    if (text) {
+      currentFrequency = analyzeText(text);
+      frequencyDisplay.textContent = formatFrequency(currentFrequency);
+    }
+  });
+
+  frequencyForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = frequencyInput.value.trim();
+    if (text && currentFrequency !== null) {
+      const frequencies = loadFrequencies();
+      frequencies.unshift({
+        text: text,
+        frequency: currentFrequency,
+        date: new Date().toLocaleDateString()
+      });
+      saveFrequencies(frequencies);
+      frequencyInput.value = '';
+      frequencyDisplay.textContent = '—';
+      currentFrequency = null;
+      renderFrequencies();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      const navItems = nav.querySelectorAll('a');
+      const existingPages = Array.from(navItems).map(link => link.getAttribute('data-page'));
+      if (!existingPages.includes('frequencies')) {
+        const freqLink = document.createElement('a');
+        freqLink.href = '#frequencies';
+        freqLink.className = 'nav-link';
+        freqLink.setAttribute('data-page', 'frequencies');
+        freqLink.textContent = 'frequencies';
+        nav.appendChild(freqLink);
+      }
+    }
+    renderFrequencies();
+  });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
